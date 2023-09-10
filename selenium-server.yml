@@ -79,8 +79,8 @@
         src: com.web-testing.jar
         dest: /home/ubuntu/com.web-testing.jar
 
-  - name : run-java-file
-    command : sudo java -jar /home/ubuntu/com.web-testing.jar
+#  - name : run-java-file
+#   command : sudo java -jar /home/ubuntu/com.web-testing.jar
 
 
  
