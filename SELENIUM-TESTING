@@ -1,0 +1,19 @@
+node{
+    stage('code checkout'){
+        git 'https://github.com/ashinv121/Health-care-webapp.git'
+    }
+    
+     stage('Deploy test app in eks'){
+            sh 'aws eks update-kubeconfig --name test-cluster --region eu-north-1'
+            sh 'kubectl apply -f health-care-deployment.yml'
+            sh 'kubectl apply -f helth-service.yml'
+            sh 'kubectl get service'
+            
+
+        }
+        
+        stage('selenium-test-server-configure'){
+        
+        ansiblePlaybook become: true, credentialsId: 'ssh-key', disableHostKeyChecking: true, installation: 'ansible', inventory: 'hosts', playbook: 'selenium-server.yml'
+    }
+}
