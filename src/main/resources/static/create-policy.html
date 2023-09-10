@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wonderful Page with Policy Creation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #00a4e4, #66e0ff);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: #000000; /* Set font color to black */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 100px auto;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 30px;
+        }
+
+        p {
+            font-size: 24px;
+            line-height: 1.6;
+        }
+
+        .policy-form {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .submit-btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .home-btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #555;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .home-btn:hover {
+            background-color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Health Insurance Portal</h1>
+        <p>
+            Better Health. Better Tomorrow
+        </p>
+        <div class="policy-form">
+            <h2>Create Policy</h2>
+            <form id="createPolicyForm">
+
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contactNo">Contact No:</label>
+                    <input type="text" id="contactNo" name="contactNo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" required>
+                </div>
+
+                <button type="submit" class="submit-btn">Create Policy</button>
+                <a href="/" class="home-btn">Home</a>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("createPolicyForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const policyData = {
+                name: document.getElementById("name").value,
+                contactNo: document.getElementById("contactNo").value,
+                age: parseInt(document.getElementById("age").value),
+            };
+
+            fetch('/createPolicy', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(policyData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                alert('Policy created successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to create policy. Please try again.');
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>View Policy</title>
+<style>
+body {
+	margin: 0;
+	padding: 0;
+	font-family: Arial, sans-serif;
+	background: linear-gradient(to bottom, #00a4e4, #66e0ff);
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	background-size: cover;
+	color: #000000; /* Set font color to black */
+}
+
+.container {
+	max-width: 800px;
+	margin: 100px auto;
+	text-align: center;
+	padding: 20px;
+}
+
+h1 {
+	font-size: 48px;
+	margin-bottom: 30px;
+}
+
+.policy-form {
+	max-width: 500px;
+	margin: 50px auto;
+	padding: 20px;
+	background-color: rgba(255, 255, 255, 0.95);
+	border-radius: 8px;
+	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+	background-image: linear-gradient(180deg, #ffffff 0%, #f1f1f1 100%);
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 20px;
+}
+
+.form-group label {
+	color: #007bff;
+	font-weight: bold;
+	font-size: 18px;
+	margin-bottom: 5px;
+}
+
+.form-group input {
+	padding: 10px;
+	font-size: 16px;
+	border-radius: 4px;
+	border: 1px solid #ccc;
+}
+
+.submit-btn {
+	padding: 10px 20px;
+	font-size: 18px;
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.submit-btn:hover {
+	background-color: #0056b3;
+}
+
+.policy-details {
+	margin-top: 30px;
+	border: 1px solid #ccc;
+	padding: 20px;
+	border-radius: 4px;
+	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+	background-color: #f9f9f9;
+}
+
+.detail {
+	font-size: 18px;
+	margin-bottom: 10px;
+}
+</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1>View Policy</h1>
+		<div class="policy-form">
+			<form id="viewPolicyForm">
+				<div class="form-group">
+					<label for="policy_id">Enter Policy ID:</label> <input type="text"
+						id="policy_id" name="policy_id" required>
+				</div>
+
+				<button type="submit" class="submit-btn">View Policy</button>
+			</form>
+			<div class="policy-details" id="policyDetails">
+				<!-- Policy details fetched from the server will be displayed here -->
+			</div>
+		</div>
+		<div class="policy-details" id="policyDetails">
+			<!-- Policy details fetched from the server will be displayed here -->
+			<div class="detail" id="policy_id"></div>
+			<div class="detail" id="name"></div>
+			<div class="detail" id="contactNo"></div>
+			<div class="detail" id="age"></div>
+			<div>
+				<button class="edit-btn" onclick="enableEdit()">Edit</button>
+				<button class="update-btn" onclick="updatePolicy()" disabled>Update</button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+        document.getElementById("viewPolicyForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const policyId = document.getElementById("policy_id").value;
+            
+            fetch(`/viewPolicy/${policyId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const policyDetailsDiv = document.getElementById("policyDetails");
+                    policyDetailsDiv.innerHTML = ''; // Clear any previous details
+
+                    // Create elements to display and edit policy details
+                    const policyIdDiv = createEditableDetailDiv("Policy ID:", "policy_id", data.policy_id);
+                    const nameDiv = createEditableDetailDiv("Name:", "name", data.name);
+                    const contactNoDiv = createEditableDetailDiv("Contact No:", "contactNo", data.contactNo);
+                    const ageDiv = createEditableDetailDiv("Age:", "age", data.age);
+
+                    // Append details to the policyDetailsDiv
+                    policyDetailsDiv.appendChild(policyIdDiv);
+                    policyDetailsDiv.appendChild(nameDiv);
+                    policyDetailsDiv.appendChild(contactNoDiv);
+                    policyDetailsDiv.appendChild(ageDiv);
+
+                    // Enable the Edit button
+                    document.querySelector(".edit-btn").disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to fetch policy details. Please try again.');
+                });
+        });
+
+        function createEditableDetailDiv(labelText, id, value) {
+            const detailDiv = document.createElement("div");
+            detailDiv.className = "detail editable-field";
+            detailDiv.innerHTML = `${labelText} <span id="${id}">${value}</span>`;
+            return detailDiv;
+        }
+
+        function enableEdit() {
+            // Enable the input fields for editing
+            document.querySelectorAll(".editable-field").forEach(field => {
+                const valueSpan = field.querySelector("span");
+                const input = document.createElement("input");
+                input.type = "text";
+                input.value = valueSpan.textContent;
+                field.replaceChild(input, valueSpan);
+            });
+
+            // Enable the Edit button and disable the Update button
+            document.querySelector(".edit-btn").disabled = true;
+            document.querySelector(".update-btn").disabled = false;
+        }
+
+        function updatePolicy() {
+            const policyId = document.getElementById("policy_id").value;
+            const name = document.getElementById("name").querySelector("input").value;
+            const contactNo = document.getElementById("contactNo").querySelector("input").value;
+            const age = document.getElementById("age").querySelector("input").value;
+
+            // Create a JSON object with the updated policy details
+            //const updatedPolicy = {"policy_id":1,"name":"amal","contactNo":"2525246","age":546};
+          const updatedPolicy = {
+               policy_id: policyId,
+               name: name,
+               contactNo: contactNo,
+          	 	age: age,
+           };
+
+            fetch(`/update/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedPolicy)
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Policy updated successfully
+                    alert(`Policy with ID: ${policyId} has been updated.`);
+                    // Refresh the page to see the updated details
+                    location.reload();
+                } else {
+                    // Failed to update policy
+                    alert('Failed to update policy. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update policy. Please try again.');
+            });
+        }
+
+        // ... (existing code) ...
+    </script>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+</head>
+
+<body>
+    <div class="container">
+        <h1>View Policy</h1>
+        <div class="policy-form">
+            <form id="viewPolicyForm">
+                <div class="form-group">
+                    <label for="policy_id">Enter Policy ID:</label>
+                    <input type="text" id="policy_id" name="policy_id" required>
+                </div>
+
+                <button type="submit" class="submit-btn">View Policy</button>
+            </form>
+            <div class="policy-details" id="policyDetails">
+                <!-- Policy details fetched from the server will be displayed here -->
+            </div>
+            <div class="policy-actions">
+                <button id="updatePolicyBtn" class="submit-btn" style="background-color: orange; margin-top: 10px;">Update Policy</button>
+                <button id="deletePolicyBtn" class="submit-btn" style="background-color: red; margin-top: 10px;">Delete Policy</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("viewPolicyForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const policyId = document.getElementById("policy_id").value;
+            
+            fetch(`/viewPolicy/${policyId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const policyDetailsDiv = document.getElementById("policyDetails");
+                    policyDetailsDiv.innerHTML = ''; // Clear any previous details
+
+                    // Create elements to display policy details
+                    const policyIdDiv = document.createElement("div");
+                    policyIdDiv.className = "detail";
+                    policyIdDiv.textContent = "Policy ID: " + data.policy_id;
+
+                    const nameDiv = document.createElement("div");
+                    nameDiv.className = "detail";
+                    nameDiv.textContent = "Name: " + data.name;
+
+                    const contactNoDiv = document.createElement("div");
+                    contactNoDiv.className = "detail";
+                    contactNoDiv.textContent = "Contact No: " + data.contactNo;
+
+                    const ageDiv = document.createElement("div");
+                    ageDiv.className = "detail";
+                    ageDiv.textContent = "Age: " + data.age;
+
+                    // Append details to the policyDetailsDiv
+                    policyDetailsDiv.appendChild(policyIdDiv);
+                    policyDetailsDiv.appendChild(nameDiv);
+                    policyDetailsDiv.appendChild(contactNoDiv);
+                    policyDetailsDiv.appendChild(ageDiv);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to fetch policy details. Please try again.');
+                });
+        });
+
+        // Adding functionality to the "Update Policy" button
+        document.getElementById("updatePolicyBtn").addEventListener("click", function (event) {
+            event.preventDefault();
+            const policyId = document.getElementById("policy_id").value;
+            // Assuming you have a separate updatePolicy function that handles updating the policy
+            // You can implement this function to make an API call or use other backend mechanisms.
+            updatePolicy(policyId);
+        });
+
+        // Adding functionality to the "Delete Policy" button
+        document.getElementById("deletePolicyBtn").addEventListener("click", function (event) {
+            event.preventDefault();
+            const policyId = document.getElementById("policy_id").value;
+            // Assuming you have a separate deletePolicy function that handles deleting the policy
+            // You can implement this function to make an API call or use other backend mechanisms.
+            deletePolicy(policyId);
+        });
+
+        // Function to update the policy using a backend API call
+        function updatePolicy(policyId) {
+            // Implement the logic to update the policy with the given policyId
+            // You may need to make a fetch() call to your backend endpoint for updating policies.
+            // For example:
+            fetch(`/updatePolicy/${policyId}`, {
+                method: 'PUT', // Use the appropriate HTTP method (PUT, PATCH, or POST)
+                // Include the necessary data in the request body if needed.
+                // For example, if you want to update policy details, you might send a JSON object:
+                // body: JSON.stringify({ name: newName, contactNo: newContactNo, age: newAge }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response if needed
+                console.log(data);
+                // You may update the displayed policy details after successful update
+                // For example, you can re-fetch the policy details and update the UI.
+                // To re-fetch, you can call the same code as the viewPolicyForm submit event.
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update the policy. Please try again.');
+            });
+        }
+
+        // Function to delete the policy using a backend API call
+        function deletePolicy(policyId) {
+            // Implement the logic to delete the policy with the given policyId
+            // You may need to make a fetch() call to your backend endpoint for deleting policies.
+            // For example:
+            fetch(`/deletePolicy/${policyId}`, {
+                method: 'DELETE', // Use the appropriate HTTP method (DELETE or POST)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response if needed
+                console.log(data);
+                // You may clear the displayed policy details after successful deletion
+                const policyDetailsDiv = document.getElementById("policyDetails");
+                policyDetailsDiv.innerHTML = '';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to delete the policy. Please try again.');
+            });
+        }
+    </script>
+</body>
+
+</html>

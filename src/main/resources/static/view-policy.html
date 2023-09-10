@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Policy</title>
+    <style>
+        
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>View Account</h1>
+        <div class="policy-form">
+            <form id="viewPolicyForm">
+                <div class="form-group">
+                    <label for="policy_id">Enter Account ID:</label>
+                    <input type="text" id="policy_id" name="policy_id" required>
+                </div>
+                <div></div>
+                <button type="submit" class="submit-btn">View Policy</button>
+            </form>
+        </div>
+        <div class="policy-details" id="policyDetails">
+            <div class="detail" id="policyId"></div>
+            <div class="detail" id="name"></div>
+            <div class="detail" id="contactNo"></div>
+            <div class="detail" id="age"></div>
+            <div class="action-buttons" id="actionButtons" style="display: none;">
+                <button class="edit-btn" onclick="enableEdit()">Edit</button>
+                <button class="update-btn" onclick="updatePolicy()" disabled>Update</button>
+                <button class="delete-btn" onclick="deletePolicy()">Delete</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Your JavaScript code
+        document.getElementById("viewPolicyForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const policyId = document.getElementById("policy_id").value;
+            
+            fetch(`/viewPolicy/${policyId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const policyDetailsDiv = document.getElementById("policyDetails");
+                    policyDetailsDiv.innerHTML = ''; // Clear any previous details
+
+                    // Create elements to display policy details
+                    const policyIdDiv = document.createElement("div");
+                    policyIdDiv.className = "detail";
+                    policyIdDiv.textContent = "Policy ID: " + data.policy_id;
+
+                    const nameDiv = document.createElement("div");
+                    nameDiv.className = "detail";
+                    nameDiv.textContent = "Name: " + data.name;
+
+                    const contactNoDiv = document.createElement("div");
+                    contactNoDiv.className = "detail";
+                    contactNoDiv.textContent = "Contact No: " + data.contactNo;
+
+                    const ageDiv = document.createElement("div");
+                    ageDiv.className = "detail";
+                    ageDiv.textContent = "Age: " + data.age;
+
+                    // Append details to the policyDetailsDiv
+                    policyDetailsDiv.appendChild(policyIdDiv);
+                    policyDetailsDiv.appendChild(nameDiv);
+                    policyDetailsDiv.appendChild(contactNoDiv);
+                    policyDetailsDiv.appendChild(ageDiv);
+
+                    // Show the action buttons
+                    const actionButtons = document.getElementById("actionButtons");
+                    actionButtons.style.display = "block";
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // You can customize the error message here if needed
+                    alert('Failed to fetch policy details. Please try again.');
+                });
+        });
+    </script>
+</body>
+
+</html>
