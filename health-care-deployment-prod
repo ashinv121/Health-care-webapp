@@ -1,1 +1,19 @@
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: health-care-prod
+spec:
+  selector:
+    matchLabels:
+      app: health-care-prod
+  template:
+    metadata:
+      labels:
+        app: health-care-prod
+    spec:
+      containers:
+      - name: health-care-prod
+        image: ashinv121/health-care:1.0
+        resources:
+        ports:
+        - containerPort: 8080
