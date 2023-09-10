@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: health-care-test
+spec:
+  selector:
+    matchLabels:
+      app: health-care-test
+  template:
+    metadata:
+      labels:
+        app: health-care-test
+    spec:
+      containers:
+      - name: health-care-test
+        image: ashinv121/health-care:1.0
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080 
