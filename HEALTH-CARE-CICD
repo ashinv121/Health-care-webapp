@@ -1,0 +1,40 @@
+node {
+
+        stage('code checkout'){
+             git 'https://github.com/ashinv121/Health-care-webapp.git'
+        }
+         stage('code compile'){
+           sh 'mvn compile'
+        }
+         stage('code test'){
+                sh 'mvn test'
+        }
+         stage('code clean package'){
+             sh 'mvn clean package'
+        }
+        stage('package containerization'){
+           sh 'docker build -t ashinv121/health-care:1.0 .'
+        }
+         stage('push image to docker hub'){
+            withCredentials([string(credentialsId: 'Dockerhubpassword', variable: 'Dockerhubpassword')]) {    
+                 sh "docker login -u ashinv121 -p ${Dockerhubpassword}"    
+            }    
+            sh 'docker push ashinv121/health-care:1.0' 
+        }
+        stage('remove docker image'){
+            sh 'docker rmi ashinv121/health-care:1.0'
+        }
+           stage('trigger test selenium pipeline'){
+            build 'SELENIUM-TESTING'
+
+        }
+        stage('Deploy production app in eks'){
+            sh 'aws eks update-kubeconfig --name test-cluster --region eu-north-1'
+            sh 'kubectl apply -f health-care-deployment-prod.yml'
+            sh 'kubectl apply -f helth-service-prod.yml'
+            sh 'kubectl get service'
+            
+
+        }
+    
+}
